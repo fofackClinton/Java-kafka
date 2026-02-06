@@ -27,7 +27,11 @@ public class BasicStream {
         final StreamsBuilder builder = new StreamsBuilder();
         final KStream<String, String> source = builder.stream(INPUT_TOPIC);
 
-        source.to(OUTPUT_TOPIC, Produced.with(Serdes.String(), Serdes.String()));
+        //filtrage des données
+        final KStream<String, String> filtered = source.filter((key, value) -> value.length() > 5)
+               .mapValues(value -> value.toUpperCase()); 
+
+        filtered.to(OUTPUT_TOPIC, Produced.with(Serdes.String(), Serdes.String()));
         KafkaStreams kafkaStreams = new KafkaStreams(builder.build(), props);
         kafkaStreams.start();
 
