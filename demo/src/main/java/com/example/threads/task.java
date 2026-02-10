@@ -3,7 +3,7 @@ package com.example.threads;
 public class task  implements Runnable {
     private final String name;
 
-    private TaskCalculator calculator;
+    private final TaskCalculator calculator;
 
     public task(String name, TaskCalculator calculator) {
         this.name = name;
