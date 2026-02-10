@@ -2,12 +2,14 @@ package com.example.consumers;
 
 import java.util.Arrays;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 
 public class Consumer {
+    private static final Logger LOGGER = Logger.getLogger(Consumer.class.getName());
 
     public static void main(String[] args) {
         Properties props = new Properties();
@@ -33,7 +35,7 @@ public class Consumer {
         } catch (org.apache.kafka.common.errors.WakeupException we) {
             // ignore - shutdown requested
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.severe(() -> "An error occurred in the consumer: " + e.getMessage());
         }
     }
 

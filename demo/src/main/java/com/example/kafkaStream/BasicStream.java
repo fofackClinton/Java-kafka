@@ -8,10 +8,14 @@ import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
+import org.apache.kafka.streams.errors.StreamsException;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.Produced;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BasicStream {
+    private static final Logger logger = LoggerFactory.getLogger(BasicStream.class);
     public static final String INPUT_TOPIC = "test-topic";
     public static final String OUTPUT_TOPIC = "output-topic";
 
@@ -32,9 +36,10 @@ public class BasicStream {
                .mapValues(value -> value.toUpperCase()); 
 
         filtered.to(OUTPUT_TOPIC, Produced.with(Serdes.String(), Serdes.String()));
-        KafkaStreams kafkaStreams = new KafkaStreams(builder.build(), props);
-        kafkaStreams.start();
-
-         
+        try (KafkaStreams kafkaStreams = new KafkaStreams(builder.build(), props)) {
+            kafkaStreams.start();
+        } catch (StreamsException | IllegalStateException e) {
+            logger.error("Kafka Streams error occurred", e);
+        }    
     }
 }
